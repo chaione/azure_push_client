@@ -4,15 +4,14 @@ defmodule AzurePushClient.Message do
   @hub Application.get_env(:azure_push_client, :azure_hub)
   @access_key Application.get_env(:azure_push_client, :azure_access_key)
 
-
   use GenServer
 
   def start_link do
-    GenServer.start_link(__MODULE__, [], name: AzurePush)
+    GenServer.start_link(__MODULE__, [], name: AzurePushClient)
   end
 
   def send(payload) do
-    GenServer.cast(AzurePush, {:send, payload})
+    GenServer.cast(AzurePushClient, {:send, payload})
   end
 
   def handle_cast({:send, payload}, state) do
