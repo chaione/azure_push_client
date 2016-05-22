@@ -1,6 +1,8 @@
 # AzurePushClient
 
-**TODO: Add description**
+Send push notifications through Azure
+
+Base on: https://github.com/christian-s/azure-push
 
 ## Installation
 
@@ -18,3 +20,11 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
           [applications: [:azure_push_client]]
         end
 
+## Config
+
+``` elixir
+config :azure_push_client,
+  azure_namespace: "...",
+  azure_hub: "...",
+  azure_access_key: "..."
+```
