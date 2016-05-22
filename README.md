@@ -6,12 +6,10 @@ Base on: https://github.com/christian-s/azure-push
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
-
   1. Add azure_push_client to your list of dependencies in `mix.exs`:
 
         def deps do
-          [{:azure_push_client, "~> 0.0.1"}]
+          [{:azure_push_client, github: "rlb3/azure_push_client"}]
         end
 
   2. Ensure azure_push_client is started before your application:
