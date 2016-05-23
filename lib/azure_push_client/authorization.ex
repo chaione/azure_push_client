@@ -1,12 +1,13 @@
 defmodule AzurePushClient.Authorization do
+  @access_key Application.get_env(:azure_push_client, :azure_access_key)
   @key_name "DefaultFullSharedAccessSignature"
   @sig_lifetime 10
 
-  def token({access_key}, url) do
+  def token(url) do
     target_uri = target_uri(url)
     expires = expires(@sig_lifetime)
     to_sign = to_sign(target_uri, expires)
-    signature = signature(access_key, to_sign)
+    signature = signature(@access_key, to_sign)
     "SharedAccessSignature sr=#{target_uri}&sig=#{signature}&se=#{expires}&skn=#{@key_name}"
   end
 

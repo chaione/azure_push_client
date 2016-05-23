@@ -1,10 +1,9 @@
 defmodule AzurePushClient.Message do
-  alias AzurePushClient.Authorization, as: Auth
   @namespace Application.get_env(:azure_push_client, :azure_namespace)
   @hub Application.get_env(:azure_push_client, :azure_hub)
-  @access_key Application.get_env(:azure_push_client, :azure_access_key)
 
   use GenServer
+  alias AzurePushClient.Authorization, as: Auth
 
   def start_link do
     GenServer.start_link(__MODULE__, [], name: AzurePushClient)
@@ -25,7 +24,7 @@ defmodule AzurePushClient.Message do
     content_type = "application/json"
     headers = [
       {"Content-Type", content_type},
-      {"Authorization", Auth.token({@access_key}, url)},
+      {"Authorization", Auth.token(url)},
       {"ServiceBusNotification-Format", format}
     ]
     request(url, json_payload, headers)
