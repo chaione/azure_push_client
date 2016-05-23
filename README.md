@@ -21,7 +21,7 @@ Base on: https://github.com/christian-s/azure-push
 ## Usage
 
 ``` elixir
-AzurePushClient.Message.send %{aps: %{alert: "Testing"}}
+AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}})
 ```
 ## TODO
 
