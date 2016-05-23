@@ -23,16 +23,6 @@ Base on: https://github.com/christian-s/azure-push
 ``` elixir
 AzurePushClient.Message.send %{aps: %{alert: "Testing"}}
 ```
-
-## Config
-
-``` elixir
-config :azure_push_client,
-  azure_namespace: "...",
-  azure_hub: "...",
-  azure_access_key: "..."
-```
-
 ## TODO
 
 - Google cloud messaging

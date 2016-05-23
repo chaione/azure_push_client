@@ -1,7 +1,4 @@
 defmodule AzurePushClient.Message do
-  @namespace Application.get_env(:azure_push_client, :azure_namespace)
-  @hub Application.get_env(:azure_push_client, :azure_hub)
-
   use GenServer
   alias AzurePushClient.Authorization, as: Auth
 
@@ -9,22 +6,22 @@ defmodule AzurePushClient.Message do
     GenServer.start_link(__MODULE__, [], name: AzurePushClient)
   end
 
-  def send(payload) do
-    GenServer.cast(AzurePushClient, {:send, payload})
+  def send({namespace, hub, access_key}, payload) do
+    GenServer.cast(AzurePushClient, {:send, payload, namespace, hub, access_key})
   end
 
-  def handle_cast({:send, payload}, state) do
-    _send(payload)
+  def handle_cast({:send, payload, namespace, hub, access_key}, state) do
+    _send(payload, {namespace, hub, access_key})
     {:noreply, state}
   end
 
-  defp _send( payload, tags \\ [], format \\ "apple") do
+  defp _send( payload, {namespace, hub, access_key}, tags \\ [], format \\ "apple") do
     json_payload = Poison.encode!(payload)
-    url = url(@namespace, @hub)
+    url = url(namespace, hub)
     content_type = "application/json"
     headers = [
       {"Content-Type", content_type},
-      {"Authorization", Auth.token(url)},
+      {"Authorization", Auth.token(url, access_key)},
       {"ServiceBusNotification-Format", format}
     ]
     request(url, json_payload, headers)
