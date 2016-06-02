@@ -7,7 +7,8 @@ defmodule AzurePushClient.Mixfile do
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps]
+     deps: deps,
+     package: package]
   end
 
   # Configuration for the OTP application
@@ -30,5 +31,15 @@ defmodule AzurePushClient.Mixfile do
   defp deps do
     [{:httpoison, "~> 0.8.0"},
      {:poison, "~> 2.0"}]
+  end
+
+  defp package do
+    [
+      files: ["lib", "mix.exs", "README", "LICENSE*"],
+      maintainers: ["Robert Boone"],
+      description: "Azure Push Client",
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/chaione/azure_push_client"}
+    ]
   end
 end

@@ -7,6 +7,12 @@ defmodule AzurePushClient.Message do
     GenServer.start_link(__MODULE__, [], name: AzurePushClient)
   end
 
+  @doc """
+  # Usage
+
+  AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}}, ["optional", "tag"])
+  """
+
   def send({namespace, hub, access_key}, payload, tags \\ []) do
     GenServer.cast(AzurePushClient, {:send, payload, namespace, hub, access_key, tags})
   end
