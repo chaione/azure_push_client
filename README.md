@@ -22,8 +22,8 @@ Base on: https://github.com/christian-s/azure-push
 
 ``` elixir
 AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}})
+AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}}, ["tags"])
 ```
 ## TODO
 
 - Google cloud messaging
-- Tags
