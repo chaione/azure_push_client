@@ -24,6 +24,11 @@ defmodule AzurePushClient.Message do
       {"Authorization", Auth.token(url, access_key)},
       {"ServiceBusNotification-Format", format}
     ]
+    headers = case Enum.join(tags, " || ") do
+                "" -> headers
+                tag_string -> [{"ServiceBusNotification-Tags", tag_string}|headers]
+              end
+
     request(url, json_payload, headers)
   end
 
