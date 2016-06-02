@@ -6,12 +6,12 @@ defmodule AzurePushClient.Message do
     GenServer.start_link(__MODULE__, [], name: AzurePushClient)
   end
 
-  def send({namespace, hub, access_key}, payload) do
-    GenServer.cast(AzurePushClient, {:send, payload, namespace, hub, access_key})
+  def send({namespace, hub, access_key}, payload, tags \\ []) do
+    GenServer.cast(AzurePushClient, {:send, payload, namespace, hub, access_key, tags})
   end
 
-  def handle_cast({:send, payload, namespace, hub, access_key}, state) do
-    _send(payload, {namespace, hub, access_key})
+  def handle_cast({:send, payload, namespace, hub, access_key, tags}, state) do
+    _send(payload, {namespace, hub, access_key}, tags)
     {:noreply, state}
   end
 
