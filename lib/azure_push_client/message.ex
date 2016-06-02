@@ -40,13 +40,13 @@ defmodule AzurePushClient.Message do
   defp request(url, payload, headers) do
     case HTTPoison.post(url, payload, headers) do
       {:ok, %HTTPoison.Response{status_code: 201}} ->
-        Logger.info {:azure_push_client, :sent}
+        Logger.info "{:azure_push_client, :sent}"
         {:ok, :sent}
       {:ok, %HTTPoison.Response{status_code: 401}} ->
-        Logger.error {:azure_push_client, :sent}
+        Logger.error "{:azure_push_client, :sent}"
         {:error, :unauthenticated}
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.error {:azure_push_client, reason}
+        Logger.error "{:azure_push_client, #{reason}}"
         {:error, reason}
     end
   end
