@@ -1,6 +1,7 @@
 defmodule AzurePushClient.Message do
   use GenServer
   alias AzurePushClient.Authorization, as: Auth
+  require Logger
 
   def start_link do
     GenServer.start_link(__MODULE__, [], name: AzurePushClient)
@@ -9,15 +10,15 @@ defmodule AzurePushClient.Message do
   @doc """
   # Usage
 
-  AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}})
+  AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}}, ["optional", "tag"])
   """
 
-  def send({namespace, hub, access_key}, payload) do
-    GenServer.cast(AzurePushClient, {:send, payload, namespace, hub, access_key})
+  def send({namespace, hub, access_key}, payload, tags \\ []) do
+    GenServer.cast(AzurePushClient, {:send, payload, namespace, hub, access_key, tags})
   end
 
-  def handle_cast({:send, payload, namespace, hub, access_key}, state) do
-    _send(payload, {namespace, hub, access_key})
+  def handle_cast({:send, payload, namespace, hub, access_key, tags}, state) do
+    _send(payload, {namespace, hub, access_key}, tags)
     {:noreply, state}
   end
 
@@ -30,6 +31,11 @@ defmodule AzurePushClient.Message do
       {"Authorization", Auth.token(url, access_key)},
       {"ServiceBusNotification-Format", format}
     ]
+    headers = case Enum.join(tags, " || ") do
+                "" -> headers
+                tag_string -> [{"ServiceBusNotification-Tags", tag_string}|headers]
+              end
+
     request(url, json_payload, headers)
   end
 
@@ -40,10 +46,13 @@ defmodule AzurePushClient.Message do
   defp request(url, payload, headers) do
     case HTTPoison.post(url, payload, headers) do
       {:ok, %HTTPoison.Response{status_code: 201}} ->
+        Logger.info "{:azure_push_client, :sent}"
         {:ok, :sent}
       {:ok, %HTTPoison.Response{status_code: 401}} ->
+        Logger.error "{:azure_push_client, :unauthenticated}"
         {:error, :unauthenticated}
       {:error, %HTTPoison.Error{reason: reason}} ->
+        Logger.error "{:azure_push_client, #{reason}}"
         {:error, reason}
     end
   end
