@@ -22,7 +22,7 @@ defmodule AzurePushClient.Message do
     {:noreply, state}
   end
 
-  defp _send( payload, {namespace, hub, access_key}, tags \\ [], format \\ "apple") do
+  defp _send(payload, {namespace, hub, access_key}, tags \\ [], format \\ "apple") do
     json_payload = Poison.encode!(payload)
     url = url(namespace, hub)
     content_type = "application/json"
