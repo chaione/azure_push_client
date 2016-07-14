@@ -3,7 +3,7 @@ defmodule AzurePushClient.Mixfile do
 
   def project do
     [app: :azure_push_client,
-     version: "0.0.2",
+     version: "0.0.3",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
