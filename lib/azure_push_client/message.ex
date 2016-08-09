@@ -10,15 +10,15 @@ defmodule AzurePushClient.Message do
   @doc """
   # Usage
 
-  AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}}, ["optional", "tag"])
+  AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}}, ["optional", "tag"], "apple")
   """
 
-  def send({namespace, hub, access_key}, payload, tags \\ []) do
-    GenServer.cast(AzurePushClient, {:send, payload, namespace, hub, access_key, tags})
+  def send({namespace, hub, access_key}, payload, tags \\ [], format \\ "apple") do
+    GenServer.cast(AzurePushClient, {:send, payload, namespace, hub, access_key, tags, format})
   end
 
-  def handle_cast({:send, payload, namespace, hub, access_key, tags}, state) do
-    _send(payload, {namespace, hub, access_key}, tags)
+  def handle_cast({:send, payload, namespace, hub, access_key, tags, format}, state) do
+    _send(payload, {namespace, hub, access_key}, tags, format)
     {:noreply, state}
   end
 
