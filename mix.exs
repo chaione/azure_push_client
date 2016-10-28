@@ -37,7 +37,7 @@ defmodule AzurePushClient.Mixfile do
 
   defp package do
     [
-      files: ["lib", "mix.exs", "README", "LICENSE*"],
+      files: ["lib", "mix.exs", "README.md", "LICENSE*"],
       maintainers: ["Robert Boone"],
       description: "Azure Push Client",
       licenses: ["MIT"],
