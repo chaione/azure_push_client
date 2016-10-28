@@ -21,8 +21,10 @@ Base on: https://github.com/christian-s/azure-push
 ## Usage
 
 ``` elixir
+Function signature: send({namespace, hub, access_key}, payload, tags \\ [], format \\ "apple")
+
 AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}})
-AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}}, ["tags"])
+AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}}, ["tags"], "apple")
 ```
 ## TODO
 
