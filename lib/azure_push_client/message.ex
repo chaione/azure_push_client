@@ -44,7 +44,7 @@ defmodule AzurePushClient.Message do
   end
 
   defp request(url, payload, headers) do
-    case HTTPoison.post(url, payload, headers) do
+    case HTTPoison.post(url, payload, headers, [ ssl: [{:versions, [:'tlsv1.2']}]]) do
       {:ok, %HTTPoison.Response{status_code: 201}} ->
         Logger.info "{:azure_push_client, :sent}"
         {:ok, :sent}
