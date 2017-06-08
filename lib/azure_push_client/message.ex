@@ -1,6 +1,5 @@
 defmodule AzurePushClient.Message do
   alias AzurePushClient.Authorization, as: Auth
-  require Logger
 
   @moduledoc """
   Simple client for azure notification hubs.
@@ -56,13 +55,10 @@ defmodule AzurePushClient.Message do
   defp request(headers, url, payload) do
     case HTTPoison.post(url, payload, headers, [ssl: [{:versions, [:'tlsv1.2']}]]) do
       {:ok, %HTTPoison.Response{status_code: 201}} ->
-        Logger.info "{:azure_push_client, :sent}"
         {:ok, :sent}
       {:ok, %HTTPoison.Response{status_code: 401}} ->
-        Logger.error "{:azure_push_client, :unauthenticated}"
         {:error, :unauthenticated}
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.error "{:azure_push_client, #{reason}}"
         {:error, reason}
     end
   end
