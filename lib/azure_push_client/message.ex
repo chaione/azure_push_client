@@ -1,50 +1,57 @@
 defmodule AzurePushClient.Message do
-  use GenServer
   alias AzurePushClient.Authorization, as: Auth
   require Logger
 
-  def start_link do
-    GenServer.start_link(__MODULE__, [], name: AzurePushClient)
-  end
-
-  @doc """
-  # Usage
-
-  AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}}, ["optional", "tag"], "apple")
+  @moduledoc """
+  Simple client for azure notification hubs.
   """
 
+  @doc """
+  AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}}, ["optional", "tag"], "apple")
+  """
+  @type namespace :: String.t
+  @type hub :: String.t
+  @type access_key :: String.t
+  @type reason :: String.t
+  @type format :: String.t
+  @type tags :: [String.t]
+  @type auth :: {namespace, hub, access_key}
+  @type format_key :: :apns | atom
+
+  @type payload :: %{required(format_key) => %{alert: String.t}}
+
+  @spec send(auth, map, tags, format) :: {:ok, :sent} | {:error, :unauthenticated} | {:error, reason}
   def send({namespace, hub, access_key}, payload, tags \\ [], format \\ "apple") do
-    GenServer.cast(AzurePushClient, {:send, payload, namespace, hub, access_key, tags, format})
+    with {:ok, json_payload} <- Poison.encode(payload),
+         {:ok, url} <- url(namespace, hub),
+         {:ok, headers} <- setup_headers(url, access_key, format)
+      do
+
+      headers
+      |> update_headers(tags)
+      |> request(url, json_payload)
+    end
   end
 
-  def handle_cast({:send, payload, namespace, hub, access_key, tags, format}, state) do
-    _send(payload, {namespace, hub, access_key}, tags, format)
-    {:noreply, state}
+  defp update_headers(headers, tags) do
+    case Enum.join(tags, " || ") do
+      "" -> headers
+      tag_string -> [{"ServiceBusNotification-Tags", tag_string} | headers]
+    end
   end
 
-  defp _send(payload, {namespace, hub, access_key}, tags \\ [], format \\ "apple") do
-    json_payload = Poison.encode!(payload)
-    url = url(namespace, hub)
-    content_type = "application/json"
-    headers = [
-      {"Content-Type", content_type},
-      {"Authorization", Auth.token(url, access_key)},
-      {"ServiceBusNotification-Format", format}
-    ]
-    headers = case Enum.join(tags, " || ") do
-                "" -> headers
-                tag_string -> [{"ServiceBusNotification-Tags", tag_string}|headers]
-              end
-
-    request(url, json_payload, headers)
+  defp setup_headers(url, access_key, format) do
+    {:ok, [{"Content-Type", "application/json"},
+           {"Authorization", Auth.token(url, access_key)},
+           {"ServiceBusNotification-Format", format}]}
   end
 
   defp url(namespace, hub) do
-    "https://#{namespace}.servicebus.windows.net/#{hub}/messages"
+    {:ok, "https://#{namespace}.servicebus.windows.net/#{hub}/messages"}
   end
 
-  defp request(url, payload, headers) do
-    case HTTPoison.post(url, payload, headers, [ ssl: [{:versions, [:'tlsv1.2']}]]) do
+  defp request(headers, url, payload) do
+    case HTTPoison.post(url, payload, headers, [ssl: [{:versions, [:'tlsv1.2']}]]) do
       {:ok, %HTTPoison.Response{status_code: 201}} ->
         Logger.info "{:azure_push_client, :sent}"
         {:ok, :sent}
