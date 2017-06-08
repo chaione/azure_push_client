@@ -2,7 +2,9 @@ defmodule AzurePushClient.Authorization do
   @key_name "DefaultFullSharedAccessSignature"
   @sig_lifetime 10
 
-  @moduledoc false
+  @moduledoc """
+  Build authorization token for Azure
+  """
 
   @type url :: String.t
   @type access_key :: String.t
