@@ -4,7 +4,7 @@ defmodule AzurePushClient.Mixfile do
   def project do
     [app: :azure_push_client,
      version: "1.0.0",
-     elixir: "~> 1.3",
+     elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps(),
@@ -15,8 +15,7 @@ defmodule AzurePushClient.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpoison],
-     mod: {AzurePushClient, []}]
+    [extra_applications: [:logger]]
   end
 
   # Dependencies can be Hex packages:
