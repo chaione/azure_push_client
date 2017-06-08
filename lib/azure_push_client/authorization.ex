@@ -4,12 +4,16 @@ defmodule AzurePushClient.Authorization do
 
   @moduledoc false
 
+  @type url :: String.t
+  @type access_key :: String.t
+
+  @spec token(url, access_key) :: String.t
   def token(url, access_key) do
     with {:ok, target_uri} <- target_uri(url),
          {:ok, expires} <- expires(@sig_lifetime),
          {:ok, to_sign} <- to_sign(target_uri, expires),
-         {:ok ,signature} <- signature(access_key, to_sign),
-    do: "SharedAccessSignature sr=#{target_uri}&sig=#{signature}&se=#{expires}&skn=#{@key_name}"
+         {:ok, signature} <- signature(access_key, to_sign),
+      do: "SharedAccessSignature sr=#{target_uri}&sig=#{signature}&se=#{expires}&skn=#{@key_name}"
   end
 
   defp target_uri(url) do
