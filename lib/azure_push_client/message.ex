@@ -12,14 +12,14 @@ defmodule AzurePushClient.Message do
   @type namespace :: String.t
   @type hub :: String.t
   @type access_key :: String.t
-  @type reason :: String.t
+  @type reason :: atom
   @type format :: String.t
   @type tags :: [String.t]
   @type format_key :: :apns | atom
 
   @type payload :: %{required(format_key) => %{alert: String.t}}
 
-  @spec send({namespace, hub, access_key}, payload, tags, format) :: {:ok, :sent} | {:error, :unauthenticated} | {:error, any}
+  @spec send({namespace, hub, access_key}, payload, tags, format) :: {:ok, :sent} | {:error, :unauthenticated} | {:error, reason}
   def send({namespace, hub, access_key}, payload, tags \\ [], format \\ "apple") do
     with {:ok, json_payload} <- Poison.encode(payload),
          {:ok, url} <- url(namespace, hub),
@@ -52,7 +52,7 @@ defmodule AzurePushClient.Message do
     {:ok, "https://#{namespace}.servicebus.windows.net/#{hub}/messages"}
   end
 
-  @spec request(list, String.t, String.t) :: {:ok, :sent} | {:error, :unauthenticated} | {:error, any}
+  @spec request(list, String.t, String.t) :: {:ok, :sent} | {:error, :unauthenticated} | {:error, atom}
   defp request(headers, url, payload) do
     case HTTPoison.post(url, payload, headers, [ssl: [{:versions, [:'tlsv1.2']}]]) do
       {:ok, %HTTPoison.Response{status_code: 201}} ->
