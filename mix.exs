@@ -31,7 +31,8 @@ defmodule AzurePushClient.Mixfile do
     [{:httpoison, "~> 0.9.0"},
      {:poison, "~> 2.0"},
      {:ex_doc, ">= 0.0.0", only: :dev},
-     {:credo, "~> 0.4.5", only: [:dev, :test]}]
+     {:credo, "~> 0.4.5", only: [:dev, :test]},
+     {:dialyxir, "~> 0.5", only: [:dev], runtime: false}]
   end
 
   defp package do
