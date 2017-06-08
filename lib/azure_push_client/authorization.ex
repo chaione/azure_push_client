@@ -3,16 +3,17 @@ defmodule AzurePushClient.Authorization do
   @sig_lifetime 10
 
   @moduledoc """
-  Build authorization token for Azure
+  Build authorization signature for azure
   """
 
   @type url :: String.t
   @type access_key :: String.t
+  @type current_time :: integer
 
-  @spec token(url, access_key) :: String.t
-  def token(url, access_key) do
+  @spec token(url, access_key, current_time) :: String.t
+  def token(url, access_key, current_time \\ :os.system_time(:seconds)) do
     with {:ok, target_uri} <- target_uri(url),
-         {:ok, expires} <- expires(@sig_lifetime),
+         {:ok, expires} <- expires(@sig_lifetime, current_time),
          {:ok, to_sign} <- to_sign(target_uri, expires),
          {:ok, signature} <- signature(access_key, to_sign),
       do: "SharedAccessSignature sr=#{target_uri}&sig=#{signature}&se=#{expires}&skn=#{@key_name}"
@@ -27,9 +28,9 @@ defmodule AzurePushClient.Authorization do
     {:ok, uri}
   end
 
-  @spec expires(integer) :: {:ok, integer}
-  defp expires(lifetime) do
-    {:ok, :os.system_time(:seconds) + lifetime}
+  @spec expires(integer, integer) :: {:ok, integer}
+  defp expires(lifetime, current_time) do
+    {:ok, current_time + lifetime}
   end
 
   @spec to_sign(String.t, integer) :: {:ok, String.t}
