@@ -20,7 +20,7 @@ defmodule AzurePushClient.Message do
 
   @type payload :: %{required(format_key) => %{alert: String.t}}
 
-  @spec send(auth, map, tags, format) :: {:ok, :sent} | {:error, :unauthenticated} | {:error, reason}
+  @spec send(auth, payload, tags, format) :: {:ok, :sent} | {:error, :unauthenticated} | {:error, reason}
   def send({namespace, hub, access_key}, payload, tags \\ [], format \\ "apple") do
     with {:ok, json_payload} <- Poison.encode(payload),
          {:ok, url} <- url(namespace, hub),
