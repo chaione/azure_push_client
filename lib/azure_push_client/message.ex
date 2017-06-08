@@ -15,7 +15,7 @@ defmodule AzurePushClient.Message do
   @type reason :: atom
   @type format :: String.t
   @type tags :: [String.t]
-  @type format_key :: :apns | atom
+  @type format_key :: :apns | :gcm
 
   @type payload :: %{required(format_key) => %{alert: String.t}}
 
