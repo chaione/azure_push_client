@@ -3,12 +3,12 @@ defmodule AzurePushClient.Mixfile do
 
   def project do
     [app: :azure_push_client,
-     version: "0.0.7",
+     version: "1.0.0",
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps,
-     package: package]
+     deps: deps(),
+     package: package()]
   end
 
   # Configuration for the OTP application
