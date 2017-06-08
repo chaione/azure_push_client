@@ -11,7 +11,14 @@ defmodule AzurePushClient.Message do
 
   AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Testing"}}, ["optional", "tag"], "apple")
   """
+  @type namespace :: String.t
+  @type hub :: String.t
+  @type access_key :: String.t
+  @type reason :: String.t
+  @type format :: String.t
+  @type auth :: {namespace, hub, access_key}
 
+  @spec send(auth, map, list, format) :: {:ok, :sent} | {:error, reason}
   def send({namespace, hub, access_key}, payload, tags \\ [], format \\ "apple") do
     with {:ok, json_payload} <- Poison.encode(payload),
          {:ok, url} <- url(namespace, hub),
