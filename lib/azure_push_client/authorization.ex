@@ -16,6 +16,7 @@ defmodule AzurePushClient.Authorization do
       do: "SharedAccessSignature sr=#{target_uri}&sig=#{signature}&se=#{expires}&skn=#{@key_name}"
   end
 
+  @spec target_uri(String.t) :: {:ok, String.t}
   defp target_uri(url) do
     uri = url
     |> String.downcase
@@ -24,14 +25,17 @@ defmodule AzurePushClient.Authorization do
     {:ok, uri}
   end
 
+  @spec expires(integer) :: {:ok, integer}
   defp expires(lifetime) do
     {:ok, :os.system_time(:seconds) + lifetime}
   end
 
+  @spec to_sign(String.t, integer) :: {:ok, String.t}
   defp to_sign(target_uri, expires) do
     {:ok, "#{target_uri}\n#{expires}"}
   end
 
+  @spec signature(String.t, String.t) :: {:ok, String.t}
   defp signature(access_key, to_sign) do
     sig = :sha256
     |> :crypto.hmac(access_key, to_sign)
@@ -42,6 +46,7 @@ defmodule AzurePushClient.Authorization do
     {:ok, sig}
   end
 
+  @spec escape_plus(String.t) :: String.t
   defp escape_plus(string) do
     Regex.replace(~r/\+/, string, "%20", global: true)
   end

@@ -19,7 +19,7 @@ defmodule AzurePushClient.Message do
 
   @type payload :: %{required(format_key) => %{alert: String.t}}
 
-  @spec send({namespace, hub, access_key}, payload, tags, format) :: {:ok, :sent} | {:error, :unauthenticated} | {:error, reason}
+  @spec send({namespace, hub, access_key}, payload, tags, format) :: {:ok, :sent} | {:error, :unauthenticated} | {:error, any}
   def send({namespace, hub, access_key}, payload, tags \\ [], format \\ "apple") do
     with {:ok, json_payload} <- Poison.encode(payload),
          {:ok, url} <- url(namespace, hub),
@@ -32,6 +32,7 @@ defmodule AzurePushClient.Message do
     end
   end
 
+  @spec update_headers(list, list) :: list
   defp update_headers(headers, tags) do
     case Enum.join(tags, " || ") do
       "" -> headers
@@ -39,16 +40,19 @@ defmodule AzurePushClient.Message do
     end
   end
 
+  @spec setup_headers(String.t, String.t, String.t) :: {:ok, list}
   defp setup_headers(url, access_key, format) do
     {:ok, [{"Content-Type", "application/json"},
            {"Authorization", Auth.token(url, access_key)},
            {"ServiceBusNotification-Format", format}]}
   end
 
+  @spec url(String.t, String.t) :: {:ok, String.t}
   defp url(namespace, hub) do
     {:ok, "https://#{namespace}.servicebus.windows.net/#{hub}/messages"}
   end
 
+  @spec request(list, String.t, String.t) :: {:ok, :sent} | {:error, :unauthenticated} | {:error, any}
   defp request(headers, url, payload) do
     case HTTPoison.post(url, payload, headers, [ssl: [{:versions, [:'tlsv1.2']}]]) do
       {:ok, %HTTPoison.Response{status_code: 201}} ->
