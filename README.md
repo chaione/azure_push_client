@@ -29,3 +29,6 @@ AzurePushClient.Message.send({namespace, hub, access_key}, %{aps: %{alert: "Test
 ## TODO
 
 - Google cloud messaging
+
+## Notes
+   Version 1.0.0 removes OTP.
