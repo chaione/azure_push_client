@@ -61,6 +61,8 @@ defmodule AzurePushClient.Message do
       {:ok, %HTTPoison.Response{status_code: 401}} ->
         Logger.error "{:azure_push_client, :unauthenticated}"
         {:error, :unauthenticated}
+      {:ok, %HTTPoison.Response{body: body}} ->
+        {:error, body}
       {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.error "{:azure_push_client, #{reason}}"
         {:error, reason}
